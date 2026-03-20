@@ -1,0 +1,607 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mind Master</title>
+    <link href="https://fonts.googleapis.com/css2?family=Bangers&family=Nunito:wght@700;900&display=swap" rel="stylesheet">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Nunito', sans-serif; background: #0d0d14; min-height: 100vh; overflow-x: hidden; padding-bottom: 100px; }
+
+        .bg-rays {
+            position: fixed; inset: 0;
+            background: radial-gradient(ellipse at 70% 0%, #1a1a3e 0%, #0d0d14 55%);
+            z-index: 0;
+        }
+        .bg-rays::before {
+            content: ''; position: absolute; top: -200px; right: -200px;
+            width: 700px; height: 700px; border-radius: 50%;
+            background: radial-gradient(circle, rgba(99,60,255,0.18) 0%, rgba(99,60,255,0.05) 50%, transparent 70%);
+            pointer-events: none;
+        }
+        .bg-rays::after {
+            content: ''; position: absolute; bottom: -100px; left: -100px;
+            width: 500px; height: 500px; border-radius: 50%;
+            background: radial-gradient(circle, rgba(0,210,255,0.1) 0%, transparent 65%);
+            pointer-events: none;
+        }
+
+        .content { position: relative; z-index: 1; padding: 24px; }
+
+        /* ── Header ── */
+        .header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 28px; flex-wrap: wrap; gap: 16px; }
+        .game-title { font-family: 'Bangers', cursive; font-size: 60px; letter-spacing: 6px; color: #fff; line-height: 1;
+            text-shadow: 0 0 40px rgba(99,60,255,0.6), 3px 3px 0 #3d1fa8; }
+        .game-subtitle { font-family: 'Bangers', cursive; font-size: 18px; letter-spacing: 8px; color: #633cff; margin-top: 4px; text-transform: uppercase; }
+        .header-right { display: flex; gap: 12px; align-items: center; flex-wrap: wrap; }
+
+        .cfg-input { background: rgba(255,255,255,0.06); border: 1.5px solid rgba(255,255,255,0.12); border-radius: 10px; color: #e0e0ff; font-family: 'Nunito', sans-serif; font-size: 15px; padding: 8px 14px; outline: none; }
+        .cfg-input::placeholder { color: rgba(255,255,255,0.25); }
+        .cfg-input:focus { border-color: #633cff; background: rgba(99,60,255,0.1); }
+
+        .outline-btn { background: transparent; border: 2px solid rgba(255,255,255,0.2); color: rgba(255,255,255,0.7); font-family: 'Bangers', cursive; font-size: 20px; letter-spacing: 2px; padding: 10px 24px; border-radius: 50px; cursor: pointer; transition: all 0.2s; }
+        .outline-btn:hover { border-color: #633cff; color: #fff; box-shadow: 0 0 20px rgba(99,60,255,0.4); }
+
+        /* ── Tabs ── */
+        .tabs { display: flex; gap: 8px; margin-bottom: 24px; }
+        .tab-btn { font-family: 'Bangers', cursive; font-size: 20px; letter-spacing: 2px; padding: 8px 24px; border-radius: 50px; cursor: pointer; border: 1.5px solid rgba(255,255,255,0.1); background: transparent; color: rgba(255,255,255,0.4); transition: all 0.2s; }
+        .tab-btn.active { background: #633cff; color: #fff; border-color: #633cff; box-shadow: 0 0 24px rgba(99,60,255,0.5); }
+        .tab-btn:hover:not(.active) { color: #fff; border-color: rgba(255,255,255,0.3); }
+        .tab-panel { display: none; }
+        .tab-panel.active { display: block; }
+
+        /* ── Play bar ── */
+        .config-bar { display: flex; align-items: center; gap: 12px; margin-bottom: 20px; flex-wrap: wrap; }
+        .action-btn { background: #633cff; border: none; color: #fff; font-family: 'Bangers', cursive; font-size: 20px; letter-spacing: 2px; padding: 10px 28px; border-radius: 50px; cursor: pointer; transition: all 0.2s; box-shadow: 0 0 20px rgba(99,60,255,0.4); white-space: nowrap; }
+        .action-btn:hover { background: #7c5cff; transform: translateY(-2px); box-shadow: 0 0 32px rgba(99,60,255,0.6); }
+        .action-btn.pink { background: #ff2d6b; box-shadow: 0 0 20px rgba(255,45,107,0.4); }
+        .action-btn.pink:hover { background: #ff5585; box-shadow: 0 0 32px rgba(255,45,107,0.6); }
+        .timer-label { color: rgba(255,255,255,0.45); font-size: 13px; letter-spacing: 1px; white-space: nowrap; font-weight: 700; }
+
+        /* ── Team Setup Card ── */
+        .team-setup { background: rgba(255,255,255,0.04); border: 1.5px solid rgba(255,255,255,0.1); border-radius: 16px; padding: 18px 24px; margin-bottom: 20px; display: flex; align-items: center; gap: 16px; flex-wrap: wrap; }
+        .team-setup-title { font-family: 'Bangers', cursive; font-size: 18px; letter-spacing: 2px; color: rgba(255,255,255,0.4); white-space: nowrap; }
+        .team-field { display: flex; align-items: center; gap: 10px; flex: 1; min-width: 180px; }
+        .team-dot { width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0; }
+        .team-dot.t1 { background: #633cff; box-shadow: 0 0 8px #633cff; }
+        .team-dot.t2 { background: #00d2ff; box-shadow: 0 0 8px #00d2ff; }
+        .team-field input { background: rgba(255,255,255,0.06); border: 1.5px solid rgba(255,255,255,0.1); border-radius: 10px; color: #fff; font-family: 'Nunito', sans-serif; font-size: 15px; font-weight: 700; padding: 8px 14px; outline: none; flex: 1; }
+        .team-field input::placeholder { color: rgba(255,255,255,0.2); font-weight: 400; }
+        .team-field input:focus { border-color: #633cff; }
+
+        /* ── Board ── */
+        .board { display: grid; gap: 16px; }
+
+        .board > div {
+            background: rgba(255,255,255,0.03);
+            border: 1px solid rgba(255,255,255,0.08);
+            border-radius: 20px;
+            padding: 14px 12px 8px;
+        }
+
+        /* Category header */
+        .category-header {
+            font-family: 'Nunito', sans-serif; font-weight: 900;
+            font-size: 20px; text-align: center;
+            padding: 13px 16px; border-radius: 12px;
+            margin-bottom: 12px; text-transform: uppercase;
+            letter-spacing: 2px; color: #fff;
+            border: 1px solid rgba(255,255,255,0.15);
+        }
+
+        /* Question tile */
+        .question-tile {
+            border-radius: 12px; padding: 17px 10px; text-align: center;
+            cursor: pointer; font-family: 'Bangers', cursive; font-size: 26px;
+            letter-spacing: 3px; line-height: 1;
+            transition: transform 0.15s, box-shadow 0.15s;
+            border: 1.5px solid transparent;
+            position: relative; user-select: none; margin-bottom: 8px;
+        }
+        .question-tile:hover:not(.answered) { transform: translateY(-4px) scale(1.02); }
+        .question-tile:active:not(.answered) { transform: translateY(1px) scale(0.98); }
+        .question-tile.answered { cursor: not-allowed; opacity: 0.2; filter: grayscale(1); }
+
+        /* Purple */
+        .cat-0 .category-header { background: rgba(99,60,255,0.25); border-color: rgba(99,60,255,0.5); color: #b49fff; }
+        .cat-0 .question-tile { background: rgba(99,60,255,0.18); border-color: rgba(99,60,255,0.45); color: #c8b8ff; box-shadow: inset 0 1px 0 rgba(255,255,255,0.08); }
+        .cat-0 .question-tile:hover:not(.answered) { background: rgba(99,60,255,0.32); border-color: #633cff; box-shadow: 0 0 24px rgba(99,60,255,0.5); color: #fff; }
+
+        /* Cyan */
+        .cat-1 .category-header { background: rgba(0,210,255,0.15); border-color: rgba(0,210,255,0.4); color: #7aeeff; }
+        .cat-1 .question-tile { background: rgba(0,210,255,0.1); border-color: rgba(0,210,255,0.35); color: #7aeeff; box-shadow: inset 0 1px 0 rgba(255,255,255,0.06); }
+        .cat-1 .question-tile:hover:not(.answered) { background: rgba(0,210,255,0.22); border-color: #00d2ff; box-shadow: 0 0 24px rgba(0,210,255,0.45); color: #fff; }
+
+        /* Pink/Rose */
+        .cat-2 .category-header { background: rgba(255,45,107,0.18); border-color: rgba(255,45,107,0.45); color: #ff8ab0; }
+        .cat-2 .question-tile { background: rgba(255,45,107,0.12); border-color: rgba(255,45,107,0.35); color: #ff8ab0; box-shadow: inset 0 1px 0 rgba(255,255,255,0.06); }
+        .cat-2 .question-tile:hover:not(.answered) { background: rgba(255,45,107,0.26); border-color: #ff2d6b; box-shadow: 0 0 24px rgba(255,45,107,0.5); color: #fff; }
+
+        /* Amber */
+        .cat-3 .category-header { background: rgba(255,180,0,0.15); border-color: rgba(255,180,0,0.4); color: #ffd966; }
+        .cat-3 .question-tile { background: rgba(255,180,0,0.1); border-color: rgba(255,180,0,0.3); color: #ffd966; box-shadow: inset 0 1px 0 rgba(255,255,255,0.06); }
+        .cat-3 .question-tile:hover:not(.answered) { background: rgba(255,180,0,0.22); border-color: #ffb400; box-shadow: 0 0 24px rgba(255,180,0,0.45); color: #fff; }
+
+        /* Green */
+        .cat-4 .category-header { background: rgba(0,230,118,0.15); border-color: rgba(0,230,118,0.4); color: #6dffc0; }
+        .cat-4 .question-tile { background: rgba(0,230,118,0.1); border-color: rgba(0,230,118,0.3); color: #6dffc0; box-shadow: inset 0 1px 0 rgba(255,255,255,0.06); }
+        .cat-4 .question-tile:hover:not(.answered) { background: rgba(0,230,118,0.22); border-color: #00e676; box-shadow: 0 0 24px rgba(0,230,118,0.45); color: #fff; }
+
+        /* ── Score Bar ── */
+        .score-bar {
+            position: fixed; bottom: 0; left: 0; right: 0; z-index: 50;
+            background: rgba(13,13,20,0.96); backdrop-filter: blur(16px);
+            border-top: 1px solid rgba(255,255,255,0.08);
+            display: flex; align-items: stretch; height: 90px;
+            transform: translateY(100%);
+            transition: transform 0.4s cubic-bezier(0.34,1.3,0.64,1);
+        }
+        .score-bar.visible { transform: translateY(0); }
+        .score-team {
+            flex: 1; display: flex; flex-direction: row; align-items: center; justify-content: center;
+            gap: 14px; padding: 0 28px; transition: background 0.15s;
+            border-right: 1px solid rgba(255,255,255,0.06); min-width: 0;
+        }
+        .score-team:last-child { border-right: none; }
+        .score-team-name { font-family: 'Nunito', sans-serif; font-weight: 900; font-size: 26px; letter-spacing: 1px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; line-height: 1; }
+        .score-team-pts { font-family: 'Bangers', cursive; font-size: 48px; letter-spacing: 2px; line-height: 1; flex-shrink: 0; }
+        .score-team.t1 .score-team-name { color: #9d80ff; }
+        .score-team.t1 .score-team-pts { color: #633cff; }
+        .score-team.t2 .score-team-name { color: #60e8ff; }
+        .score-team.t2 .score-team-pts { color: #00d2ff; }
+        .score-divider { display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 0 16px; gap: 2px; flex-shrink: 0; }
+        .vs-line { width: 1px; height: 12px; background: linear-gradient(to bottom, #633cff, #00d2ff); border-radius: 2px; }
+        .vs-text { font-family: 'Bangers', cursive; font-size: 22px; letter-spacing: 4px; background: linear-gradient(135deg, #633cff, #00d2ff); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; line-height: 1; }
+
+        /* ── Modal ── */
+        .modal-overlay { display: none; position: fixed; inset: 0; z-index: 100; background: rgba(0,0,0,0.8); align-items: center; justify-content: center; backdrop-filter: blur(12px); }
+        .modal-overlay.open { display: flex; }
+        .modal {
+            position: relative; background: #13131f; border-radius: 24px;
+            padding: 40px 48px; max-width: 820px; width: 94%;
+            border: 1px solid rgba(99,60,255,0.4);
+            box-shadow: 0 0 0 1px rgba(255,255,255,0.05), 0 32px 80px rgba(0,0,0,0.6), 0 0 60px rgba(99,60,255,0.15);
+            animation: popIn 0.28s cubic-bezier(0.34,1.56,0.64,1); text-align: center;
+        }
+        @keyframes popIn { from { transform: scale(0.65); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+
+        .modal-score-badge { font-family: 'Bangers', cursive; font-size: 20px; letter-spacing: 3px; padding: 7px 22px; border-radius: 50px; display: inline-block; margin-bottom: 24px; border: 1px solid rgba(255,255,255,0.15); }
+        .modal-question { font-family: 'Nunito', sans-serif; font-size: 30px; font-weight: 900; color: #e8e8ff; line-height: 1.45; margin-bottom: 24px; }
+
+        .answer-box { background: rgba(0,210,255,0.08); border: 1px solid rgba(0,210,255,0.3); border-radius: 14px; padding: 16px 24px; margin-bottom: 24px; display: none; }
+        .answer-box.visible { display: block; animation: popIn 0.2s ease; }
+        .answer-label { font-family: 'Bangers', cursive; font-size: 13px; letter-spacing: 3px; color: #00d2ff; margin-bottom: 6px; opacity: 0.7; }
+        .answer-text { font-family: 'Nunito', sans-serif; font-size: 26px; font-weight: 900; color: #7aeeff; }
+
+        .timer-ring { display: flex; align-items: center; justify-content: center; margin-bottom: 24px; }
+        .timer-circle { position: relative; width: 100px; height: 100px; }
+        .timer-circle svg { transform: rotate(-90deg); }
+        .timer-track { fill: none; stroke: rgba(255,255,255,0.06); stroke-width: 7; }
+        .timer-bar { fill: none; stroke-width: 7; stroke-linecap: round; transition: stroke-dashoffset 1s linear, stroke 0.5s; }
+        .timer-number { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; font-family: 'Bangers', cursive; font-size: 36px; color: #e8e8ff; letter-spacing: 1px; }
+        .timer-ok .timer-bar { stroke: #633cff; }
+        .timer-warning .timer-bar { stroke: #ffb400; }
+        .timer-expired .timer-bar { stroke: #ff2d6b; }
+
+        .modal-btns { display: flex; gap: 14px; justify-content: center; flex-wrap: wrap; margin-bottom: 24px; }
+        .modal-btn { border: none; font-family: 'Bangers', cursive; font-size: 22px; letter-spacing: 2px; padding: 13px 36px; border-radius: 50px; cursor: pointer; transition: all 0.2s; }
+        .modal-btn.reveal { background: transparent; color: #00d2ff; border: 2px solid rgba(0,210,255,0.4); }
+        .modal-btn.reveal:hover { background: rgba(0,210,255,0.12); border-color: #00d2ff; box-shadow: 0 0 20px rgba(0,210,255,0.3); }
+
+        .award-section { border-top: 1px solid rgba(255,255,255,0.07); padding-top: 20px; }
+        .award-label { font-family: 'Bangers', cursive; font-size: 15px; letter-spacing: 3px; color: rgba(255,255,255,0.25); margin-bottom: 14px; }
+        .award-btns { display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; }
+        .award-btn {
+            border: 1.5px solid transparent; font-family: 'Bangers', cursive; font-size: 20px; letter-spacing: 2px;
+            padding: 14px 28px; border-radius: 14px; cursor: pointer; transition: all 0.2s;
+            display: flex; flex-direction: column; align-items: center; gap: 4px; min-width: 150px;
+        }
+        .award-btn .btn-team-name { font-family: 'Nunito', sans-serif; font-weight: 900; font-size: 16px; letter-spacing: 1px; }
+        .award-btn .btn-pts { font-size: 28px; }
+        .award-btn.t1 { background: rgba(99,60,255,0.18); border-color: rgba(99,60,255,0.5); color: #c8b8ff; }
+        .award-btn.t1:hover { background: rgba(99,60,255,0.32); border-color: #633cff; box-shadow: 0 0 24px rgba(99,60,255,0.4); color: #fff; transform: translateY(-3px); }
+        .award-btn.t2 { background: rgba(0,210,255,0.12); border-color: rgba(0,210,255,0.4); color: #7aeeff; }
+        .award-btn.t2:hover { background: rgba(0,210,255,0.24); border-color: #00d2ff; box-shadow: 0 0 24px rgba(0,210,255,0.35); color: #fff; transform: translateY(-3px); }
+        .award-btn.nopts { background: rgba(255,255,255,0.04); border-color: rgba(255,255,255,0.1); color: rgba(255,255,255,0.3); }
+        .award-btn.nopts:hover { background: rgba(255,255,255,0.08); color: rgba(255,255,255,0.6); transform: translateY(-2px); }
+
+        /* ── Create panel ── */
+        .create-panel { max-width: 900px; }
+        .panel-section { background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.08); border-radius: 16px; padding: 20px 24px; margin-bottom: 16px; }
+        .panel-label { font-family: 'Bangers', cursive; font-size: 18px; letter-spacing: 2px; color: #633cff; margin-bottom: 14px; }
+        .full-input { background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.1); border-radius: 8px; color: #e0e0ff; font-family: 'Nunito', sans-serif; font-size: 15px; font-weight: 700; padding: 9px 14px; outline: none; width: 100%; }
+        .full-input:focus { border-color: #633cff; background: rgba(99,60,255,0.1); }
+        .full-input::placeholder { color: rgba(255,255,255,0.2); font-weight: 400; }
+        .categories-list { display: flex; flex-direction: column; gap: 14px; }
+        .category-block { background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.07); border-radius: 12px; padding: 14px 16px; }
+        .cat-block-header { display: flex; align-items: center; gap: 10px; margin-bottom: 12px; }
+        .cat-block-header span { font-family: 'Bangers', cursive; font-size: 16px; letter-spacing: 2px; color: #633cff; white-space: nowrap; }
+        .remove-btn { background: transparent; border: 1px solid rgba(255,45,107,0.4); color: rgba(255,45,107,0.7); border-radius: 6px; font-size: 12px; padding: 4px 10px; cursor: pointer; font-family: 'Nunito', sans-serif; font-weight: 700; white-space: nowrap; }
+        .remove-btn:hover { background: rgba(255,45,107,0.15); color: #ff2d6b; border-color: #ff2d6b; }
+        .questions-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+        .q-row { display: flex; gap: 6px; align-items: center; }
+        .score-badge { font-family: 'Bangers', cursive; font-size: 13px; letter-spacing: 1px; background: rgba(99,60,255,0.2); color: #b49fff; padding: 4px 8px; border-radius: 6px; min-width: 48px; text-align: center; }
+        .q-input { background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.09); border-radius: 6px; color: #e0e0ff; font-family: 'Nunito', sans-serif; font-size: 14px; font-weight: 700; padding: 6px 8px; outline: none; flex: 1; min-width: 0; }
+        .q-input:focus { border-color: #633cff; background: rgba(99,60,255,0.08); }
+        .q-input::placeholder { color: rgba(255,255,255,0.18); font-weight: 400; }
+        .add-cat-btn { background: transparent; border: 1px dashed rgba(99,60,255,0.4); color: rgba(99,60,255,0.7); font-family: 'Bangers', cursive; font-size: 18px; letter-spacing: 2px; padding: 10px; border-radius: 12px; cursor: pointer; width: 100%; transition: all 0.2s; margin-top: 12px; }
+        .add-cat-btn:hover { border-color: #633cff; color: #633cff; background: rgba(99,60,255,0.08); }
+        .submit-row { display: flex; gap: 12px; justify-content: flex-end; align-items: center; margin-top: 8px; }
+        .success-toast { background: rgba(0,230,118,0.15); border: 1px solid rgba(0,230,118,0.4); color: #6dffc0; font-family: 'Bangers', cursive; font-size: 16px; letter-spacing: 2px; padding: 10px 20px; border-radius: 10px; display: none; }
+
+        .state-msg { font-family: 'Bangers', cursive; font-size: 32px; letter-spacing: 4px; color: rgba(255,255,255,0.2); text-align: center; padding: 80px 20px; }
+
+        @keyframes scoreBump { 0%{transform:scale(1)} 40%{transform:scale(1.35)} 100%{transform:scale(1)} }
+        .score-bump { animation: scoreBump 0.4s cubic-bezier(0.34,1.56,0.64,1); }
+    </style>
+</head>
+<body>
+<div class="bg-rays"></div>
+<div class="content">
+
+    <div class="header">
+        <div>
+            <div class="game-title">MIND MASTER</div>
+            <div class="game-subtitle">TRIVIA CHALLENGE</div>
+        </div>
+        <div class="header-right">
+            <input class="cfg-input" type="text" id="apiBase" placeholder="API URL" value="http://localhost:8080" style="width:220px;" />
+            <button class="outline-btn" onclick="resetGame()">↺ Reset</button>
+        </div>
+    </div>
+
+    <div class="tabs">
+        <button class="tab-btn active" id="tab-btn-play" onclick="switchTab('play', this)">▶ Play Game</button>
+        <button class="tab-btn" id="tab-btn-create" onclick="switchTab('create', this)">＋ Create Game</button>
+    </div>
+
+    <!-- Play Tab -->
+    <div class="tab-panel active" id="tab-play">
+        <div class="team-setup" id="teamSetup">
+            <span class="team-setup-title">TEAMS</span>
+            <div class="team-field">
+                <div class="team-dot t1"></div>
+                <input type="text" id="team1Name" placeholder="Team 1 name" value="Team Alpha" />
+            </div>
+            <div class="team-field">
+                <div class="team-dot t2"></div>
+                <input type="text" id="team2Name" placeholder="Team 2 name" value="Team Beta" />
+            </div>
+        </div>
+        <div class="config-bar">
+            <input class="cfg-input" type="number" id="gameIdInput" placeholder="Game ID" value="1" min="1" style="width:100px;" />
+            <button class="action-btn" onclick="loadGame()">▶ Load Game</button>
+            <span class="timer-label">Timer (sec):</span>
+            <input class="cfg-input" type="number" id="timerSeconds" value="30" min="5" max="300" style="width:80px;" />
+        </div>
+        <div id="boardArea"><div class="state-msg">Enter a Game ID and click Load Game</div></div>
+    </div>
+
+    <!-- Create Tab -->
+    <div class="tab-panel" id="tab-create">
+        <div class="create-panel">
+            <div class="panel-section">
+                <div class="panel-label">Game Info</div>
+                <input class="full-input" type="text" id="newGameName" placeholder="Game name..." />
+            </div>
+            <div class="panel-section">
+                <div class="panel-label">Categories & Questions</div>
+                <div class="categories-list" id="categoriesList"></div>
+                <button class="add-cat-btn" onclick="addCategory()">＋ Add Category</button>
+            </div>
+            <div class="submit-row">
+                <div class="success-toast" id="successToast"></div>
+                <button class="action-btn pink" onclick="submitGame()">🚀 Create Game</button>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+<!-- Score Bar -->
+<div class="score-bar" id="scoreBar">
+    <div class="score-team t1" id="scoreTeam1">
+        <div class="score-team-name" id="scoreT1Name">Team Alpha</div>
+        <div class="score-team-pts" id="scoreT1Pts">0</div>
+    </div>
+    <div class="score-divider">
+        <div class="vs-line"></div>
+        <div class="vs-text">VS</div>
+        <div class="vs-line"></div>
+    </div>
+    <div class="score-team t2" id="scoreTeam2">
+        <div class="score-team-name" id="scoreT2Name">Team Beta</div>
+        <div class="score-team-pts" id="scoreT2Pts">0</div>
+    </div>
+</div>
+
+<!-- Question Modal -->
+<div class="modal-overlay" id="questionModal">
+    <div class="modal">
+        <div id="modalBadge" class="modal-score-badge"></div>
+        <div id="modalQuestion" class="modal-question"></div>
+        <div class="answer-box" id="answerBox">
+            <div class="answer-label">ANSWER</div>
+            <div class="answer-text" id="answerText"></div>
+        </div>
+        <div class="timer-ring">
+            <div class="timer-circle">
+                <svg viewBox="0 0 100 100" width="100" height="100">
+                    <circle class="timer-track" cx="50" cy="50" r="42"/>
+                    <circle class="timer-bar timer-ok" id="timerBar" cx="50" cy="50" r="42" stroke-dasharray="263.9" stroke-dashoffset="0"/>
+                </svg>
+                <div class="timer-number" id="timerNum">30</div>
+            </div>
+        </div>
+        <div class="modal-btns">
+            <button class="modal-btn reveal" onclick="revealAnswer()">👁 Show Answer</button>
+        </div>
+        <div class="award-section">
+            <div class="award-label">WHO GETS THE POINTS?</div>
+            <div class="award-btns" id="awardBtns">
+                <button class="award-btn t1" onclick="awardPoints(1)">
+                    <span class="btn-team-name" id="awardT1Name">TEAM ALPHA</span>
+                    <span class="btn-pts" id="awardPts1">+5</span>
+                </button>
+                <button class="award-btn t2" onclick="awardPoints(2)">
+                    <span class="btn-team-name" id="awardT2Name">TEAM BETA</span>
+                    <span class="btn-pts" id="awardPts2">+5</span>
+                </button>
+                <button class="award-btn nopts" onclick="awardPoints(0)">
+                    <span class="btn-team-name">NO POINTS</span>
+                    <span class="btn-pts">✕</span>
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    const API = () => document.getElementById('apiBase').value.replace(/\/$/, '');
+    const CIRCUMFERENCE = 2 * Math.PI * 42;
+    let currentGame = null;
+    let timerInterval = null;
+    let currentQuestionId = null;
+    let currentAnswer = null;
+    let currentScore = 0;
+    const scores = [0, 0];
+
+    function switchTab(name, btn) {
+        document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+        document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+        document.getElementById('tab-' + name).classList.add('active');
+        btn.classList.add('active');
+    }
+
+    function updateScoreBar() {
+        const t1 = document.getElementById('team1Name').value || 'Team 1';
+        const t2 = document.getElementById('team2Name').value || 'Team 2';
+        document.getElementById('scoreT1Name').textContent = t1.toUpperCase();
+        document.getElementById('scoreT2Name').textContent = t2.toUpperCase();
+        document.getElementById('scoreT1Pts').textContent = scores[0];
+        document.getElementById('scoreT2Pts').textContent = scores[1];
+        document.getElementById('awardT1Name').textContent = t1.toUpperCase();
+        document.getElementById('awardT2Name').textContent = t2.toUpperCase();
+    }
+
+    function awardPoints(team) {
+        if (team === 1 || team === 2) {
+            scores[team - 1] += currentScore;
+            updateScoreBar();
+            const ptsEl = document.getElementById(`scoreT${team}Pts`);
+            ptsEl.classList.remove('score-bump');
+            void ptsEl.offsetWidth;
+            ptsEl.classList.add('score-bump');
+        }
+        closeModal();
+    }
+
+    async function loadGame() {
+        const id = document.getElementById('gameIdInput').value;
+        if (!id) return;
+        document.getElementById('boardArea').innerHTML = '<div class="state-msg">Loading...</div>';
+        try {
+            const res = await fetch(`${API()}/api/v1/game/${id}`);
+            if (!res.ok) throw new Error(`HTTP ${res.status}`);
+            currentGame = await res.json();
+            updateScoreBar();
+            document.getElementById('scoreBar').classList.add('visible');
+            document.getElementById('teamSetup').style.display = 'none';
+            renderBoard();
+        } catch (e) {
+            document.getElementById('boardArea').innerHTML = `<div class="state-msg">Error: ${e.message}</div>`;
+        }
+    }
+
+    function renderBoard() {
+        if (!currentGame) return;
+        const cats = currentGame.categories || [];
+        const boardEl = document.getElementById('boardArea');
+        boardEl.innerHTML = '';
+        const grid = document.createElement('div');
+        grid.className = 'board';
+        grid.style.gridTemplateColumns = `repeat(${cats.length}, 1fr)`;
+
+        cats.forEach((cat, ci) => {
+            const col = document.createElement('div');
+            col.className = `cat-${ci % 5}`;
+            const header = document.createElement('div');
+            header.className = 'category-header';
+            header.textContent = cat.name;
+            col.appendChild(header);
+
+            (cat.questions || []).forEach(q => {
+                const tile = document.createElement('div');
+                tile.className = 'question-tile' + (q.answered ? ' answered' : '');
+                tile.textContent = `${q.score} PTS`;
+                tile.dataset.id = q.id;
+                if (!q.answered) tile.onclick = () => openQuestion(q.id, q.score, ci);
+                col.appendChild(tile);
+            });
+            grid.appendChild(col);
+        });
+        boardEl.appendChild(grid);
+    }
+
+    const BADGE_COLORS = [
+        { bg: 'rgba(99,60,255,0.2)', border: 'rgba(99,60,255,0.5)', color: '#c8b8ff' },
+        { bg: 'rgba(0,210,255,0.15)', border: 'rgba(0,210,255,0.4)', color: '#7aeeff' },
+        { bg: 'rgba(255,45,107,0.18)', border: 'rgba(255,45,107,0.45)', color: '#ff8ab0' },
+        { bg: 'rgba(255,180,0,0.18)', border: 'rgba(255,180,0,0.4)', color: '#ffd966' },
+        { bg: 'rgba(0,230,118,0.15)', border: 'rgba(0,230,118,0.4)', color: '#6dffc0' },
+    ];
+
+    async function openQuestion(qId, score, ci) {
+        try {
+            const res = await fetch(`${API()}/api/v1/question/${qId}`);
+            if (!res.ok) throw new Error(`HTTP ${res.status}`);
+            const q = await res.json();
+            currentQuestionId = qId;
+            currentAnswer = q.answer;
+            currentScore = score;
+
+            const bc = BADGE_COLORS[ci % 5];
+            const badge = document.getElementById('modalBadge');
+            badge.textContent = `${score} POINTS`;
+            badge.style.background = bc.bg;
+            badge.style.borderColor = bc.border;
+            badge.style.color = bc.color;
+
+            document.getElementById('modalQuestion').textContent = q.description;
+            document.getElementById('answerBox').classList.remove('visible');
+            document.getElementById('answerText').textContent = '';
+            document.getElementById('awardPts1').textContent = `+${score}`;
+            document.getElementById('awardPts2').textContent = `+${score}`;
+
+            const t1 = document.getElementById('team1Name').value || 'Team 1';
+            const t2 = document.getElementById('team2Name').value || 'Team 2';
+            document.getElementById('awardT1Name').textContent = t1.toUpperCase();
+            document.getElementById('awardT2Name').textContent = t2.toUpperCase();
+
+            document.getElementById('questionModal').classList.add('open');
+            startTimer();
+        } catch (e) {
+            alert('Could not load question: ' + e.message);
+        }
+    }
+
+    function revealAnswer() {
+        document.getElementById('answerText').textContent = currentAnswer || '—';
+        document.getElementById('answerBox').classList.add('visible');
+    }
+
+    function startTimer() {
+        clearInterval(timerInterval);
+        const total = parseInt(document.getElementById('timerSeconds').value) || 30;
+        let remaining = total;
+        const bar = document.getElementById('timerBar');
+        const num = document.getElementById('timerNum');
+        function update() {
+            num.textContent = remaining;
+            bar.style.strokeDashoffset = CIRCUMFERENCE * (1 - remaining / total);
+            if (remaining <= total * 0.25) bar.className = 'timer-bar timer-expired';
+            else if (remaining <= total * 0.5) bar.className = 'timer-bar timer-warning';
+            else bar.className = 'timer-bar timer-ok';
+        }
+        update();
+        timerInterval = setInterval(() => { remaining--; update(); if (remaining <= 0) clearInterval(timerInterval); }, 1000);
+    }
+
+    async function closeModal() {
+        clearInterval(timerInterval);
+        document.getElementById('questionModal').classList.remove('open');
+        if (currentQuestionId !== null) {
+            try { await fetch(`${API()}/api/v1/question/${currentQuestionId}/answered`, { method: 'PUT' }); }
+            catch (e) { console.warn('Mark answered failed:', e); }
+            const tile = document.querySelector(`.question-tile[data-id="${currentQuestionId}"]`);
+            if (tile) { tile.classList.add('answered'); tile.onclick = null; }
+            currentQuestionId = null; currentAnswer = null; currentScore = 0;
+        }
+    }
+
+    async function resetGame() {
+        if (!currentGame) return;
+        if (!confirm('Reset all questions and scores?')) return;
+        scores[0] = 0; scores[1] = 0;
+        updateScoreBar();
+        document.getElementById('teamSetup').style.display = '';
+        document.getElementById('scoreBar').classList.remove('visible');
+        try {
+            await fetch(`${API()}/api/v1/game/${currentGame.id}/reset`, { method: 'PUT' });
+            await loadGame();
+        } catch (e) { alert('Reset failed: ' + e.message); }
+    }
+
+    document.getElementById('questionModal').addEventListener('click', function(e) {
+        if (e.target === this) closeModal();
+    });
+
+    document.getElementById('team1Name').addEventListener('input', updateScoreBar);
+    document.getElementById('team2Name').addEventListener('input', updateScoreBar);
+
+    const SCORES = [5, 10, 20, 40];
+    let catCount = 0;
+
+    function addCategory() {
+        catCount++;
+        const id = `cat-${catCount}`;
+        const div = document.createElement('div');
+        div.className = 'category-block'; div.id = id;
+        div.innerHTML = `
+    <div class="cat-block-header">
+      <span>CAT ${catCount}</span>
+      <input class="full-input" type="text" placeholder="Category name..." id="${id}-name" style="flex:1;"/>
+      <button class="remove-btn" onclick="document.getElementById('${id}').remove()">✕ Remove</button>
+    </div>
+    <div class="questions-grid">
+      ${SCORES.map(s => `
+        <div class="q-row">
+          <span class="score-badge">${s} PTS</span>
+          <input class="q-input" type="text" placeholder="Question..." id="${id}-q-${s}-desc"/>
+          <input class="q-input" type="text" placeholder="Answer..." id="${id}-q-${s}-ans" style="max-width:110px;"/>
+        </div>`).join('')}
+    </div>`;
+        document.getElementById('categoriesList').appendChild(div);
+    }
+
+    async function submitGame() {
+        const name = document.getElementById('newGameName').value.trim();
+        if (!name) { alert('Please enter a game name.'); return; }
+        const catBlocks = document.querySelectorAll('.category-block');
+        if (!catBlocks.length) { alert('Add at least one category.'); return; }
+        const categories = [];
+        for (const block of catBlocks) {
+            const catName = block.querySelector('[id$="-name"]').value.trim();
+            if (!catName) { alert('Every category needs a name.'); return; }
+            const questions = [];
+            for (const s of SCORES) {
+                const desc = block.querySelector(`[id$="-q-${s}-desc"]`).value.trim();
+                const ans  = block.querySelector(`[id$="-q-${s}-ans"]`).value.trim();
+                if (!desc || !ans) { alert(`Fill in all questions for "${catName}" (${s} pts).`); return; }
+                questions.push({ description: desc, answer: ans, score: s });
+            }
+            categories.push({ name: catName, questions });
+        }
+        try {
+            const res = await fetch(`${API()}/api/v1/game`, {
+                method: 'POST', headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ name, categories })
+            });
+            if (!res.ok) throw new Error(`HTTP ${res.status}`);
+            const created = await res.json();
+            const toast = document.getElementById('successToast');
+            toast.textContent = `✓ "${created.name}" created! ID: ${created.id}`;
+            toast.style.display = 'block';
+            setTimeout(() => { toast.style.display = 'none'; }, 5000);
+            document.getElementById('newGameName').value = '';
+            document.getElementById('categoriesList').innerHTML = '';
+            catCount = 0;
+            document.getElementById('gameIdInput').value = created.id;
+        } catch (e) { alert('Create failed: ' + e.message); }
+    }
+
+    addCategory(); addCategory(); addCategory();
+</script>
+</body>
+</html>
