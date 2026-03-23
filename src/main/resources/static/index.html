@@ -248,6 +248,9 @@
     </style>
 </head>
 <body>
+
+<audio id="bgMusic" loop src="game-music.mp3"></audio>
+
 <div class="bg-rays"></div>
 <div class="content">
 
@@ -257,6 +260,7 @@
             <div class="game-subtitle">TRIVIA CHALLENGE</div>
         </div>
         <div class="header-right">
+            <button class="outline-btn" id="musicToggleBtn" onclick="toggleMusic()">🔊 Music</button>
             <input class="cfg-input" type="text" id="apiBase" placeholder="API URL" value="https://mind-master-game-azz.onrender.com" style="width:220px;" />
             <button class="outline-btn" onclick="resetGame()">↺ Reset</button>
         </div>
@@ -267,10 +271,8 @@
         <button class="tab-btn" id="tab-btn-create" onclick="switchTab('create', this)">＋ Create Game</button>
     </div>
 
-    <!-- Play Tab -->
     <div class="tab-panel active" id="tab-play">
 
-        <!-- Team Setup -->
         <div class="team-setup" id="teamSetup">
             <span class="team-setup-title">🏖 TEAMS</span>
             <div class="team-field">
@@ -293,7 +295,6 @@
         <div id="boardArea"><div class="state-msg">Enter a Game ID and click Load Game</div></div>
     </div>
 
-    <!-- Create Tab -->
     <div class="tab-panel" id="tab-create">
         <div class="create-panel">
             <div class="panel-section">
@@ -314,7 +315,6 @@
 
 </div>
 
-<!-- Score Bar -->
 <div class="score-bar" id="scoreBar">
     <div class="score-team t1" id="scoreTeam1">
         <div class="score-team-name" id="scoreT1Name">Team Sunset</div>
@@ -331,7 +331,6 @@
     </div>
 </div>
 
-<!-- Question Modal -->
 <div class="modal-overlay" id="questionModal">
     <div class="modal">
         <div id="modalBadge" class="modal-score-badge"></div>
@@ -378,6 +377,33 @@
 </div>
 
 <script>
+    // ── Music Setup ────────────────────────────────────────────
+    const bgMusic = document.getElementById("bgMusic");
+    const musicToggleBtn = document.getElementById("musicToggleBtn");
+    let hasInteracted = false;
+
+    // Start music on first click anywhere
+    document.addEventListener('click', function(event) {
+        // Only trigger if it's the first click and not clicking the music button itself
+        if (!hasInteracted && event.target.id !== "musicToggleBtn") {
+            bgMusic.play().catch(e => console.log("Audio play prevented:", e));
+            hasInteracted = true;
+        }
+    }, { once: true });
+
+    // Function to toggle music on/off
+    function toggleMusic() {
+        if (bgMusic.paused) {
+            bgMusic.play();
+            musicToggleBtn.textContent = "🔊 Music";
+        } else {
+            bgMusic.pause();
+            musicToggleBtn.textContent = "🔇 Muted";
+        }
+        hasInteracted = true;
+    }
+    // ───────────────────────────────────────────────────────────
+
     const API = () => document.getElementById('apiBase').value.replace(/\/$/, '');
     const CIRCUMFERENCE = 2 * Math.PI * 42;
     let currentGame = null;
