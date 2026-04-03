@@ -22,6 +22,6 @@ public class Game {
     private int id;
     public String name;
 
-    @OneToMany(mappedBy = "game", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "game", cascade = CascadeType.ALL, orphanRemoval = true)
     public List<Category> categories;
 }

@@ -1,6 +1,7 @@
 package berserk.ezz.controller;
 
 import berserk.ezz.dto.CreateGameRequest;
+import berserk.ezz.dto.UpdateGameRequest;
 import berserk.ezz.entity.Game;
 import berserk.ezz.service.GameService;
 import jakarta.validation.Valid;
@@ -38,6 +39,19 @@ public class GameController {
     public ResponseEntity<Void> resetGame(@PathVariable int id) {
         gameService.restGame(id);
         return new ResponseEntity<>(HttpStatus.OK);
+    }
+
+    @PutMapping("/{id}")
+    public ResponseEntity<Game> updateGame(
+            @PathVariable int id,
+            @RequestBody UpdateGameRequest game) {
+        return new ResponseEntity<>(gameService.updateGame(id, game), HttpStatus.OK);
+    }
+
+    @DeleteMapping("{id}")
+    public ResponseEntity<Void> deleteGame(@PathVariable int id) {
+            gameService.deleteGame(id);
+            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 
 

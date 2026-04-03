@@ -45,7 +45,7 @@
         .outline-btn:hover { background: #fff; color: #0ea5c8; transform: scale(1.05); box-shadow: 0 4px 20px rgba(255,255,255,0.4); }
 
         /* ── Tabs ── */
-        .tabs { display: flex; gap: 8px; margin-bottom: 20px; }
+        .tabs { display: flex; gap: 8px; margin-bottom: 20px; flex-wrap: wrap; }
         .tab-btn { font-family: 'Bangers', cursive; font-size: 20px; letter-spacing: 2px; padding: 8px 24px; border-radius: 50px; cursor: pointer; border: 2px solid rgba(255,255,255,0.35); background: rgba(255,255,255,0.12); color: rgba(255,255,255,0.7); transition: all 0.2s; }
         .tab-btn.active { background: #fff; color: #0284a8; box-shadow: 0 4px 16px rgba(0,0,0,0.12); }
         .tab-btn:hover:not(.active) { color: #fff; border-color: #fff; background: rgba(255,255,255,0.22); }
@@ -58,6 +58,8 @@
         .action-btn:hover { background: #ff8555; transform: translateY(-2px); box-shadow: 0 6px 0 #c0431a; }
         .action-btn.pink { background: #ff3d7f; box-shadow: 0 4px 0 #b5004d; }
         .action-btn.pink:hover { background: #ff6699; box-shadow: 0 6px 0 #b5004d; }
+        .action-btn.green { background: #00c9b1; box-shadow: 0 4px 0 #008a78; color: #003d36; }
+        .action-btn.green:hover { background: #26e6d0; box-shadow: 0 6px 0 #008a78; }
         .timer-label { color: rgba(255,255,255,0.9); font-size: 13px; letter-spacing: 1px; white-space: nowrap; font-weight: 700; }
 
         /* ── Team Setup Card ── */
@@ -74,7 +76,6 @@
         /* ── Board: glass column cards ── */
         .board { display: grid; gap: 16px; }
 
-        /* Each column gets a frosted glass card */
         .board > div {
             background: rgba(255,255,255,0.14);
             border: 1.5px solid rgba(255,255,255,0.35);
@@ -84,7 +85,6 @@
             box-shadow: 0 8px 32px rgba(2,90,130,0.18), inset 0 1px 0 rgba(255,255,255,0.3);
         }
 
-        /* Category header: solid white pill, color text — stands out clearly */
         .category-header {
             font-family: 'Nunito', sans-serif; font-weight: 900;
             font-size: 22px; text-align: center;
@@ -94,7 +94,6 @@
             text-shadow: 0 1px 4px rgba(0,0,0,0.25);
         }
 
-        /* Question tile: solid bright colored */
         .question-tile {
             border-radius: 14px; padding: 18px 10px; text-align: center;
             cursor: pointer; font-family: 'Bangers', cursive; font-size: 26px;
@@ -128,7 +127,7 @@
         .cat-4 .question-tile { background: #29b6f6; color: #002040; box-shadow: 0 6px 0 #0277bd; }
         .cat-4 .question-tile:hover:not(.answered) { box-shadow: 0 10px 0 #0277bd, 0 12px 24px rgba(41,182,246,0.4); }
 
-        /* ── Score Bar (fixed bottom) ── */
+        /* ── Score Bar ── */
         .score-bar {
             position: fixed; bottom: 0; left: 0; right: 0; z-index: 50;
             background: rgba(255,255,255,0.97); backdrop-filter: blur(10px);
@@ -189,14 +188,12 @@
         .timer-warning .timer-bar { stroke: #ffd000; }
         .timer-expired .timer-bar { stroke: #ff3d7f; }
 
-        /* Top action buttons row */
         .modal-btns { display: flex; gap: 14px; justify-content: center; flex-wrap: wrap; margin-bottom: 24px; }
         .modal-btn { border: none; font-family: 'Bangers', cursive; font-size: 22px; letter-spacing: 2px; padding: 13px 36px; border-radius: 50px; cursor: pointer; transition: all 0.2s; }
         .modal-btn.reveal { background: #00c9b1; color: #003d36; box-shadow: 0 5px 0 #008a78; }
         .modal-btn.reveal:hover { transform: translateY(-3px); box-shadow: 0 8px 0 #008a78, 0 0 20px #00c9b155; }
         .modal-btn.reveal:active { transform: translateY(1px); box-shadow: 0 2px 0 #008a78; }
 
-        /* Point award section */
         .award-section { border-top: 2px dashed rgba(0,61,82,0.12); padding-top: 20px; }
         .award-label { font-family: 'Bangers', cursive; font-size: 16px; letter-spacing: 3px; color: rgba(0,61,82,0.45); margin-bottom: 14px; }
         .award-btns { display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; }
@@ -216,7 +213,7 @@
         .award-btn.nopts { background: rgba(0,61,82,0.08); color: rgba(0,61,82,0.5); box-shadow: 0 5px 0 rgba(0,61,82,0.1); }
         .award-btn.nopts:hover { background: rgba(0,61,82,0.14); transform: translateY(-2px); }
 
-        /* ── Create panel ── */
+        /* ── Create / Edit panel ── */
         .create-panel { max-width: 900px; }
         .panel-section { background: rgba(255,255,255,0.2); border: 2px solid rgba(255,255,255,0.45); border-radius: 16px; padding: 20px 24px; margin-bottom: 16px; backdrop-filter: blur(4px); }
         .panel-label { font-family: 'Bangers', cursive; font-size: 18px; letter-spacing: 2px; color: #003d52; margin-bottom: 14px; }
@@ -242,7 +239,6 @@
 
         .state-msg { font-family: 'Bangers', cursive; font-size: 32px; letter-spacing: 4px; color: #fff; text-align: center; padding: 80px 20px; text-shadow: 2px 2px 0 rgba(0,0,0,0.15); }
 
-        /* Score bump animation */
         @keyframes scoreBump { 0%{transform:scale(1)} 40%{transform:scale(1.35)} 100%{transform:scale(1)} }
         .score-bump { animation: scoreBump 0.4s cubic-bezier(0.34,1.56,0.64,1); }
     </style>
@@ -269,10 +265,10 @@
     <div class="tabs">
         <button class="tab-btn active" id="tab-btn-play" onclick="switchTab('play', this)">▶ Play Game</button>
         <button class="tab-btn" id="tab-btn-create" onclick="switchTab('create', this)">＋ Create Game</button>
+        <button class="tab-btn" id="tab-btn-manage" onclick="switchTab('manage', this)">✏ Manage Game</button>
     </div>
 
     <div class="tab-panel active" id="tab-play">
-
         <div class="team-setup" id="teamSetup">
             <span class="team-setup-title">🏖 TEAMS</span>
             <div class="team-field">
@@ -308,7 +304,31 @@
             </div>
             <div class="submit-row">
                 <div class="success-toast" id="successToast"></div>
-                <button class="action-btn pink" onclick="submitGame()">🚀 Create Game</button>
+                <button class="action-btn green" onclick="submitGame()">🚀 Create Game</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="tab-panel" id="tab-manage">
+        <div class="config-bar">
+            <input class="cfg-input" type="number" id="manageGameIdInput" placeholder="Game ID" min="1" style="width:120px;" />
+            <button class="action-btn" onclick="loadGameForEdit()">⬇ Load to Edit</button>
+            <button class="action-btn pink" id="deleteGameBtn" onclick="deleteGame()" style="display: none; margin-left: auto;">🗑 Delete Game</button>
+        </div>
+
+        <div class="create-panel" id="editPanel" style="display: none;">
+            <div class="panel-section">
+                <div class="panel-label">Edit Game Info</div>
+                <input class="full-input" type="text" id="editGameName" placeholder="Game name" />
+            </div>
+            <div class="panel-section">
+                <div class="panel-label">Edit Categories & Questions</div>
+                <div class="categories-list" id="editCategoriesList"></div>
+                <button class="add-cat-btn" onclick="addEditCategory()">＋ Add Category</button>
+            </div>
+            <div class="submit-row">
+                <div class="success-toast" id="editSuccessToast"></div>
+                <button class="action-btn green" onclick="saveGameChanges()">💾 Save Changes</button>
             </div>
         </div>
     </div>
@@ -377,21 +397,18 @@
 </div>
 
 <script>
-    // ── Music Setup ────────────────────────────────────────────
+    // ── Music Setup ──
     const bgMusic = document.getElementById("bgMusic");
     const musicToggleBtn = document.getElementById("musicToggleBtn");
     let hasInteracted = false;
 
-    // Start music on first click anywhere
     document.addEventListener('click', function(event) {
-        // Only trigger if it's the first click and not clicking the music button itself
         if (!hasInteracted && event.target.id !== "musicToggleBtn") {
             bgMusic.play().catch(e => console.log("Audio play prevented:", e));
             hasInteracted = true;
         }
     }, { once: true });
 
-    // Function to toggle music on/off
     function toggleMusic() {
         if (bgMusic.paused) {
             bgMusic.play();
@@ -402,16 +419,23 @@
         }
         hasInteracted = true;
     }
-    // ───────────────────────────────────────────────────────────
 
     const API = () => document.getElementById('apiBase').value.replace(/\/$/, '');
     const CIRCUMFERENCE = 2 * Math.PI * 42;
+    const SCORES = [5, 10, 20, 40];
+
+    // Play state
     let currentGame = null;
     let timerInterval = null;
     let currentQuestionId = null;
     let currentAnswer = null;
     let currentScore = 0;
-    const scores = [0, 0]; // index 0 = team1, index 1 = team2
+    const scores = [0, 0];
+
+    // Manage state
+    let editingGameId = null;
+    let catCount = 0;
+    let editCatCount = 0;
 
     function switchTab(name, btn) {
         document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
@@ -420,7 +444,7 @@
         btn.classList.add('active');
     }
 
-    // ── Score Bar ──────────────────────────────────────────────
+    // ── Play Logic ──
     function updateScoreBar() {
         const t1 = document.getElementById('team1Name').value || 'Team 1';
         const t2 = document.getElementById('team2Name').value || 'Team 2';
@@ -444,7 +468,6 @@
         closeModal();
     }
 
-    // ── Game Loading ───────────────────────────────────────────
     async function loadGame() {
         const id = document.getElementById('gameIdInput').value;
         if (!id) return;
@@ -487,13 +510,11 @@
                 if (!q.answered) tile.onclick = () => openQuestion(q.id, q.score, ci);
                 col.appendChild(tile);
             });
-
             grid.appendChild(col);
         });
         boardEl.appendChild(grid);
     }
 
-    // ── Question Modal ─────────────────────────────────────────
     async function openQuestion(qId, score, ci) {
         try {
             const res = await fetch(`${API()}/api/v1/question/${qId}`);
@@ -512,16 +533,8 @@
             document.getElementById('modalQuestion').textContent = q.description;
             document.getElementById('answerBox').classList.remove('visible');
             document.getElementById('answerText').textContent = '';
-
-            // Update award button point labels
             document.getElementById('awardPts1').textContent = `+${score}`;
             document.getElementById('awardPts2').textContent = `+${score}`;
-
-            // Sync team names in modal
-            const t1 = document.getElementById('team1Name').value || 'Team 1';
-            const t2 = document.getElementById('team2Name').value || 'Team 2';
-            document.getElementById('awardT1Name').textContent = t1.toUpperCase();
-            document.getElementById('awardT2Name').textContent = t2.toUpperCase();
 
             document.getElementById('questionModal').classList.add('open');
             startTimer();
@@ -579,10 +592,10 @@
         } catch (e) { alert('Reset failed: ' + e.message); }
     }
 
-    // ── Create Game ────────────────────────────────────────────
-    const SCORES = [5, 10, 20, 40];
-    let catCount = 0;
+    document.getElementById('team1Name').addEventListener('input', updateScoreBar);
+    document.getElementById('team2Name').addEventListener('input', updateScoreBar);
 
+    // ── Create Game Logic ──
     function addCategory() {
         catCount++;
         const id = `cat-${catCount}`;
@@ -590,26 +603,26 @@
         div.className = 'category-block';
         div.id = id;
         div.innerHTML = `
-    <div class="cat-block-header">
-      <span>CAT ${catCount}</span>
-      <input class="full-input" type="text" placeholder="Category name (e.g. علوم)" id="${id}-name" style="flex:1;"/>
-      <button class="remove-btn" onclick="document.getElementById('${id}').remove()">✕ Remove</button>
-    </div>
-    <div class="questions-grid">
-      ${SCORES.map(s => `
-        <div class="q-row">
-          <span class="score-badge">${s} PTS</span>
-          <input class="q-input" type="text" placeholder="Question..." id="${id}-q-${s}-desc"/>
-          <input class="q-input" type="text" placeholder="Answer..." id="${id}-q-${s}-ans" style="max-width:110px;"/>
-        </div>`).join('')}
-    </div>`;
+            <div class="cat-block-header">
+              <span>CAT ${catCount}</span>
+              <input class="full-input" type="text" placeholder="Category name..." id="${id}-name" style="flex:1;"/>
+              <button class="remove-btn" onclick="document.getElementById('${id}').remove()">✕ Remove</button>
+            </div>
+            <div class="questions-grid">
+              ${SCORES.map(s => `
+                <div class="q-row">
+                  <span class="score-badge">${s} PTS</span>
+                  <input class="q-input" type="text" placeholder="Question..." id="${id}-q-${s}-desc"/>
+                  <input class="q-input" type="text" placeholder="Answer..." id="${id}-q-${s}-ans" style="max-width:110px;"/>
+                </div>`).join('')}
+            </div>`;
         document.getElementById('categoriesList').appendChild(div);
     }
 
     async function submitGame() {
         const name = document.getElementById('newGameName').value.trim();
         if (!name) { alert('Please enter a game name.'); return; }
-        const catBlocks = document.querySelectorAll('.category-block');
+        const catBlocks = document.querySelectorAll('#categoriesList .category-block');
         if (!catBlocks.length) { alert('Add at least one category.'); return; }
 
         const categories = [];
@@ -634,21 +647,152 @@
             if (!res.ok) throw new Error(`HTTP ${res.status}`);
             const created = await res.json();
             const toast = document.getElementById('successToast');
-            toast.textContent = `✓ "${created.name}" created! ID: ${created.id}`;
+            toast.textContent = `✓ Game Created! ID: ${created.id}`;
             toast.style.display = 'block';
             setTimeout(() => { toast.style.display = 'none'; }, 5000);
+
             document.getElementById('newGameName').value = '';
             document.getElementById('categoriesList').innerHTML = '';
             catCount = 0;
+            addCategory(); addCategory(); addCategory(); // Reset defaults
+
             document.getElementById('gameIdInput').value = created.id;
+            document.getElementById('manageGameIdInput').value = created.id;
         } catch (e) { alert('Create failed: ' + e.message); }
     }
 
-    // Keep score bar team names in sync as user types
-    document.getElementById('team1Name').addEventListener('input', updateScoreBar);
-    document.getElementById('team2Name').addEventListener('input', updateScoreBar);
 
+    // ── Manage (Update & Delete) Logic ──
+    async function loadGameForEdit() {
+        const id = document.getElementById('manageGameIdInput').value;
+        if (!id) return alert('Please enter a Game ID to edit.');
+
+        try {
+            const res = await fetch(`${API()}/api/v1/game/${id}`);
+            if (!res.ok) throw new Error(`Game not found (HTTP ${res.status})`);
+            const game = await res.json();
+
+            editingGameId = game.id;
+            document.getElementById('editGameName').value = game.name;
+            document.getElementById('editCategoriesList').innerHTML = '';
+            editCatCount = 0;
+
+            if (game.categories && game.categories.length > 0) {
+                game.categories.forEach(cat => addEditCategory(cat));
+            } else {
+                addEditCategory();
+            }
+
+            document.getElementById('editPanel').style.display = 'block';
+            document.getElementById('deleteGameBtn').style.display = 'inline-block';
+        } catch (e) {
+            alert('Load failed: ' + e.message);
+        }
+    }
+
+    function addEditCategory(catData = null) {
+        editCatCount++;
+        const id = `edit-cat-${editCatCount}`;
+        const div = document.createElement('div');
+        div.className = 'category-block';
+        div.id = id;
+        div.innerHTML = `
+            <div class="cat-block-header">
+              <span>CAT ${editCatCount}</span>
+              <input class="full-input" type="text" placeholder="Category name..." id="${id}-name" style="flex:1;"/>
+              <button class="remove-btn" onclick="document.getElementById('${id}').remove()">✕ Remove</button>
+            </div>
+            <div class="questions-grid">
+              ${SCORES.map(s => `
+                <div class="q-row">
+                  <span class="score-badge">${s} PTS</span>
+                  <input class="q-input" type="text" placeholder="Question..." id="${id}-q-${s}-desc"/>
+                  <input class="q-input" type="text" placeholder="Answer..." id="${id}-q-${s}-ans" style="max-width:110px;"/>
+                </div>`).join('')}
+            </div>`;
+
+        document.getElementById('editCategoriesList').appendChild(div);
+
+        // Populate fields if data exists
+        if (catData) {
+            document.getElementById(`${id}-name`).value = catData.name;
+            if (catData.questions) {
+                catData.questions.forEach(q => {
+                    const descInput = document.getElementById(`${id}-q-${q.score}-desc`);
+                    const ansInput = document.getElementById(`${id}-q-${q.score}-ans`);
+                    if (descInput) descInput.value = q.description;
+                    if (ansInput) ansInput.value = q.answer;
+                });
+            }
+        }
+    }
+
+    async function saveGameChanges() {
+        if (!editingGameId) return;
+
+        const name = document.getElementById('editGameName').value.trim();
+        if (!name) { alert('Game name is required.'); return; }
+
+        const catBlocks = document.querySelectorAll('#editCategoriesList .category-block');
+        const categories = [];
+
+        for (const block of catBlocks) {
+            const catName = block.querySelector('[id$="-name"]').value.trim();
+            if (!catName) { alert('Every category needs a name.'); return; }
+
+            const questions = [];
+            for (const s of SCORES) {
+                const desc = block.querySelector(`[id$="-q-${s}-desc"]`).value.trim();
+                const ans  = block.querySelector(`[id$="-q-${s}-ans"]`).value.trim();
+                if (!desc || !ans) { alert(`Fill all questions/answers for "${catName}".`); return; }
+                questions.push({ description: desc, answer: ans, score: s });
+            }
+            categories.push({ name: catName, questions });
+        }
+
+        try {
+            const res = await fetch(`${API()}/api/v1/game/${editingGameId}`, {
+                method: 'PUT', headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ name, categories })
+            });
+            if (!res.ok) throw new Error(`HTTP ${res.status}`);
+
+            const toast = document.getElementById('editSuccessToast');
+            toast.textContent = `✓ Changes Saved Successfully!`;
+            toast.style.display = 'block';
+            setTimeout(() => { toast.style.display = 'none'; }, 4000);
+
+        } catch (e) { alert('Update failed: ' + e.message); }
+    }
+
+    async function deleteGame() {
+        if (!editingGameId) return;
+
+        const confirmation = confirm('⚠️ Are you completely sure you want to DELETE this game? This action cannot be undone.');
+        if (!confirmation) return;
+
+        try {
+            const res = await fetch(`${API()}/api/v1/game/${editingGameId}`, {
+                method: 'DELETE'
+            });
+
+            if (!res.ok) throw new Error(`HTTP ${res.status}`);
+
+            alert('Game deleted successfully.');
+
+            // Clear UI
+            document.getElementById('editPanel').style.display = 'none';
+            document.getElementById('deleteGameBtn').style.display = 'none';
+            document.getElementById('manageGameIdInput').value = '';
+            document.getElementById('gameIdInput').value = '';
+            editingGameId = null;
+
+        } catch (e) { alert('Delete failed: ' + e.message); }
+    }
+
+    // Initialize initial create form
     addCategory(); addCategory(); addCategory();
+
 </script>
 </body>
 </html>

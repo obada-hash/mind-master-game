@@ -1,6 +1,7 @@
 package berserk.ezz.service.impl;
 
 import berserk.ezz.dto.CreateGameRequest;
+import berserk.ezz.dto.UpdateGameRequest;
 import berserk.ezz.entity.Category;
 import berserk.ezz.entity.Game;
 import berserk.ezz.entity.Question;
@@ -11,6 +12,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -65,5 +67,52 @@ public class GameServiceImpl implements GameService {
                         .forEach(qn -> qn.setAnswered(false)));
 
         gameRepo.save(game);
+    }
+
+    @Override
+    public Game updateGame(int id, UpdateGameRequest game) {
+        Game oldGame = gameRepo.findById(id).orElseThrow(
+                () -> new IllegalArgumentException("Game not found")
+        );
+        if (game.getName() != null) {
+            oldGame.setName(game.getName());
+        }
+        if (game.getCategories() != null) {
+            oldGame.getCategories().clear();
+            gameRepo.save(oldGame);
+
+
+            List<Category> categories = game.getCategories().stream()
+                    .map((cat) -> {
+                                Category category = new Category();
+                                category.setName(cat.getName());
+                                category.setGame(oldGame);
+                                List<Question> questionList = cat.getQuestions().stream()
+                                        .map((qu) -> {
+                                            Question question = new Question();
+                                            question.setDescription(qu.getDescription());
+                                            question.setAnswer(qu.getAnswer());
+                                            question.setScore(qu.getScore());
+                                            question.setAnswered(false);
+                                            question.setCategory(category);
+                                            return question;
+                                        })
+                                        .collect(Collectors.toList());
+                                category.setQuestions(questionList);
+                                return category;
+                            }
+                    )
+                    .collect(Collectors.toList());
+            oldGame.getCategories().addAll(categories);
+        }
+        return gameRepo.save(oldGame);
+    }
+
+    @Override
+    public void deleteGame(int id) {
+        Game game = gameRepo.findById(id).orElseThrow(
+                () -> new IllegalArgumentException("Game not found")
+        );
+        gameRepo.delete(game);
     }
 }
